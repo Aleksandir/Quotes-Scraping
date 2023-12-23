@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -24,31 +25,29 @@ def main():
     all_quotes = []
     url = "http://quotes.toscrape.com"
 
-    while True:
-        all_quotes.extend(get_quotes_from_page(url))
-        next_button = BeautifulSoup(requests.get(url).text, "html.parser").find(
-            class_="next"
+    count = 1
+
+    # Get all quotes from all pages until there is no next page.
+    while url:
+        # Clear the terminal based on the OS.
+        os.system("cls" if os.name == "nt" else "clear")  # Clear the terminal
+        print(f"Scraping page {count}...")
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        all_quotes.extend(get_quotes_from_page(soup))
+
+        next_button = soup.find(class_="next")
+        url = (
+            f"http://quotes.toscrape.com{next_button.find('a')['href']}"
+            if next_button
+            else None
         )
-        if next_button is None:
-            break
-        url = f"http://quotes.toscrape.com{next_button.find('a')['href']}"
+        count += 1
 
     save_quotes(all_quotes)
 
 
-def get_quotes_from_page(url) -> list:
-    """
-    Get quotes from a page.
-
-    Args:
-        url (str): URL of the page.
-
-    Returns:
-        list: List of Quote objects.
-    """
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-
+def get_quotes_from_page(soup) -> list:
     soup_quotes = soup.find_all(class_="quote")
 
     quotes = []
