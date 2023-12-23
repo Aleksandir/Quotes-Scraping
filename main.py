@@ -4,7 +4,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-url = "http://quotes.toscrape.com"
+url: str = "http://quotes.toscrape.com"
 
 
 class Quote:
@@ -12,12 +12,12 @@ class Quote:
     Represents a quote with its author and tags.
     """
 
-    def __init__(self, quote: str, author: str, tags: list):
+    def __init__(self, quote: str, author: str, tags: list[str]):
         self.quote = quote
         self.author = author
         self.tags = tags
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.quote} - {self.author}"
 
 
@@ -47,7 +47,7 @@ def main():
     save_quotes(all_quotes)
 
 
-def get_quotes_from_page(soup) -> list:
+def get_quotes_from_page(soup: BeautifulSoup) -> list:
     """
     Extracts quotes from a BeautifulSoup object representing a web page.
 
@@ -79,7 +79,7 @@ def get_quotes_from_page(soup) -> list:
     return quotes
 
 
-def save_quotes(quotes: list) -> None:
+def save_quotes(quotes: list[Quote]) -> None:
     """
     Save quotes to a JSON file.
 
