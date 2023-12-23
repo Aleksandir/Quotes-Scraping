@@ -48,6 +48,15 @@ def main():
 
 
 def get_quotes_from_page(soup) -> list:
+    """
+    Extracts quotes from a BeautifulSoup object representing a web page.
+
+    Args:
+        soup (BeautifulSoup): The BeautifulSoup object representing the web page.
+
+    Returns:
+        list: A list of Quote objects, each containing the quote text, author, and tags.
+    """
     soup_quotes = soup.find_all(class_="quote")
 
     quotes = []
@@ -70,7 +79,7 @@ def get_quotes_from_page(soup) -> list:
     return quotes
 
 
-def save_quotes(quotes):
+def save_quotes(quotes: list) -> None:
     """
     Save quotes to a JSON file.
 
