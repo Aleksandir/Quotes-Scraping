@@ -21,36 +21,54 @@ class Quote:
 
 
 def main():
-    # get website page
-    response = requests.get(url)
+    all_quotes = []
+    url = "http://quotes.toscrape.com"
 
-    # parse through html
+    while True:
+        all_quotes.extend(get_quotes_from_page(url))
+        next_button = BeautifulSoup(requests.get(url).text, "html.parser").find(
+            class_="next"
+        )
+        if next_button is None:
+            break
+        url = f"http://quotes.toscrape.com{next_button.find('a')['href']}"
+
+    save_quotes(all_quotes)
+
+
+def get_quotes_from_page(url) -> list:
+    """
+    Get quotes from a page.
+
+    Args:
+        url (str): URL of the page.
+
+    Returns:
+        list: List of Quote objects.
+    """
+    response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # get all quote elements
     soup_quotes = soup.find_all(class_="quote")
 
-    # for each quote element, get quote text, author, and tags, and append to quotes list
     quotes = []
     for quote in soup_quotes:
-        # get quote text and remove “ and ”
         quote_text = (
             quote.find(class_="text").get_text().replace("“", "").replace("”", "")
         )
         quote_author = quote.find(class_="author").get_text()
 
-        # get tags, remove empty tags, and append to processed_tags
         tags = quote.find(class_="tags")
         processed_tags = []
         for tag in tags:
             tag_text = tag.get_text().strip()
-            if tag_text:  # if tag_text is not empty
+            if tag_text:
                 processed_tags.append(tag_text)
 
         quote = Quote(quote_text, quote_author, processed_tags)
         quotes.append(quote)
 
-    save_quotes(quotes)
+    return quotes
 
 
 def save_quotes(quotes):
