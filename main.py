@@ -12,7 +12,7 @@ class Quote:
     Represents a quote with its author and tags.
     """
 
-    def __init__(self, quote, author, tags):
+    def __init__(self, quote: str, author: str, tags: list):
         self.quote = quote
         self.author = author
         self.tags = tags
